@@ -1,16 +1,22 @@
 import React from "react";
-import ButtonRedirect from "../components/ButtonRedirect";
 import Image from "next/image";
+import { convertToDateString } from "../utils/utils";
+import Link from "next/link";
 
 const fetchPosts = async () => {
   const response = await fetch(`${process.env.BLOG_API_DNS}/api/v1/posts`);
 
   const { data: posts } = await response.json();
 
-  return posts;
+  return posts.map((post: Post) => {
+    return {
+      ...post,
+      createdAt: convertToDateString(post.createdAt),
+    };
+  });
 };
 
-const ListBlogs = async () => {
+const ListPosts = async () => {
   const posts = await fetchPosts();
 
   return (
@@ -19,14 +25,14 @@ const ListBlogs = async () => {
         <div className="min-h-28 ">
           <div className="max-w-screen-lg mx-auto py-4">
             <h2 className="font-bold text-center text-6xl text-slate-700 font-display">
-              Our Blog Post
+              Our Blog Posts
             </h2>
-            <p className="text-center mt-4 font-medium text-slate-500">
-              OUR NEWS FEED
-            </p>
             <div className="flex gap-6 mt-20">
               {posts.map((post: Post) => (
-                <div key={post.id} className="bg-white w-1/3 shadow rounded-lg overflow-hidden">
+                <div
+                  key={post.id}
+                  className="bg-white w-1/3 shadow rounded-lg overflow-hidden"
+                >
                   <Image
                     src="https://loremflickr.com/320/240?random=1"
                     className="object-cover h-52 w-full"
@@ -37,12 +43,12 @@ const ListBlogs = async () => {
                   />
                   <div className="p-6 text-slate-800">
                     <span className="block text-slate-400 font-semibold text-sm">
-                      { post.createdAt }
+                      {post.createdAt}
                     </span>
                     <h3 className="mt-3 font-bold text-lg pb-4 border-b border-slate-300">
-                      <a href="https://play.tailwindcss.com/TGny89rOkl?layout=horizontal">
-                        { post.title }
-                      </a>
+                      <Link href={`/posts/${post.id}`}>
+                        {post.title}
+                      </Link>
                     </h3>
                     <div className="flex mt-4 gap-4 items-center">
                       <span className="flex gap-1 items-center text-sm">
@@ -113,4 +119,4 @@ const ListBlogs = async () => {
   );
 };
 
-export default ListBlogs;
+export default ListPosts;

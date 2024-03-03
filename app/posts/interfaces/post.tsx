@@ -6,3 +6,9 @@ interface Post {
   createdAt: string;
   updatedAt: string;
 }
+
+interface ShowPostProps {
+  params: {
+    id: number;
+  };
+}
